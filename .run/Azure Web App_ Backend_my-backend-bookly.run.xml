@@ -1,0 +1,46 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Azure Web App: Backend:my-backend-bookly" type="com.microsoft.intellij.run.configuration.WebAppConfigurationType" factoryName="Azure Web App">
+    <option name="appServicePlanName" value="ASP-pw2022react-ba6a" />
+    <option name="appServicePlanResourceGroupName" value="pw2022-react" />
+    <option name="appSettingsKey" value="fdf9c804-9a29-444c-9e56-1c4e935b2fd4" />
+    <option name="appSettingsToRemove">
+      <set />
+    </option>
+    <option name="applicationLogLevel" value="Error" />
+    <option name="artifactIdentifier" value="pw.react:pw-2021-backend-starter:1.0.0" />
+    <option name="azureArtifactType" value="Maven" />
+    <option name="creatingAppServicePlan" value="false" />
+    <option name="creatingNew" value="false" />
+    <option name="creatingResGrp" value="false" />
+    <option name="deployToRoot" value="true" />
+    <option name="deployToSlot" value="false" />
+    <option name="enableApplicationLog" value="false" />
+    <option name="enableDetailedErrorMessage" value="false" />
+    <option name="enableFailedRequestTracing" value="false" />
+    <option name="enableWebServerLogging" value="false" />
+    <option name="newSlotConfigurationSource" />
+    <option name="newSlotName" />
+    <option name="openBrowserAfterDeployment" value="true" />
+    <option name="operatingSystem" value="linux" />
+    <option name="packaging" value="jar" />
+    <option name="pricing" value="" />
+    <option name="projectBase" value="" />
+    <option name="projectType" value="" />
+    <option name="region" value="northeurope" />
+    <option name="resourceGroup" value="pw2022-react" />
+    <option name="slotName" />
+    <option name="slotPanelVisible" value="false" />
+    <option name="subscriptionId" value="a3aad904-7f7e-4850-948a-ef6778766c5a" />
+    <option name="targetName" value="" />
+    <option name="targetPath" value="" />
+    <option name="webAppContainer" value="Java SE" />
+    <option name="webAppId" value="/subscriptions/a3aad904-7f7e-4850-948a-ef6778766c5a/resourceGroups/pw2022-react/providers/Microsoft.Web/sites/my-backend-bookly" />
+    <option name="webAppJavaVersion" value="17" />
+    <option name="webAppName" value="my-backend-bookly" />
+    <option name="webServerLogQuota" value="35" />
+    <option name="webServerRetentionPeriod" />
+    <method v="2">
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package" />
+    </method>
+  </configuration>
+</component>
