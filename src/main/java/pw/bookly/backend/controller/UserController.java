@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<Collection<UserDTO>> getAllUsers(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<Collection<UserDTO>> getAllUsers(@RequestParam String page, @RequestParam String pageSize, @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
         return ResponseEntity.ok(repository.findAll().stream().map(UserDTO::valueFrom).collect(toList()));
     }
