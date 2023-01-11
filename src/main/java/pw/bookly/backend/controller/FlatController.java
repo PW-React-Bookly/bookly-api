@@ -35,7 +35,7 @@ public class FlatController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<Collection<FlatDTO>> getAllCompanies(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<Collection<FlatDTO>> getAllFlats(@RequestHeader HttpHeaders headers) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
             return ResponseEntity.ok(repository.findAll().stream().map(FlatDTO::valueFrom).collect(toList()));
@@ -44,7 +44,7 @@ public class FlatController {
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<Collection<FlatDTO>> createCompanies(@RequestHeader HttpHeaders headers,
+    public ResponseEntity<Collection<FlatDTO>> createFlats(@RequestHeader HttpHeaders headers,
                                                                   @Valid @RequestBody List<FlatDTO> companies) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
