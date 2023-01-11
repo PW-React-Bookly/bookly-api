@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 public class JwtTokenService implements Serializable {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenService.class);
 
     @Serial
     private static final long serialVersionUID = -2550185165626007488L;
@@ -61,7 +61,7 @@ public class JwtTokenService implements Serializable {
         Map<String, Object> claims = new HashMap<>();
         claims.put("ip", getClientIp(request));
         claims.put("user-agent", getUserAgent(request));
-        log.info("Adding ip:{} and user-agent:{} to the claims.", getClientIp(request), getUserAgent(request));
+        logger.info("Adding ip:{} and user-agent:{} to the claims.", getClientIp(request), getUserAgent(request));
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
@@ -140,6 +140,6 @@ public class JwtTokenService implements Serializable {
 
     public void removeTokens() {
         tokenRepository.deleteAll();
-        log.info("Tokens cleared.");
+        logger.info("Tokens cleared.");
     }
 }

@@ -36,10 +36,10 @@ public class JwtConfig {
         log.debug("JWT expirationMs: {}", expirationMs);
     }
 
-//    @Bean
-//    public JwtUserDetailsService jwtUserDetailsService(UserRepository userRepository) {
-//        return new JwtUserDetailsService(userRepository);
-//    }
+    @Bean
+    public JwtUserDetailsService jwtUserDetailsService(UserRepository userRepository) {
+        return new JwtUserDetailsService(userRepository);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -51,10 +51,10 @@ public class JwtConfig {
         return new JwtTokenService(secret, expirationMs, tokenRepository);
     }
 
-//    @Bean
-//    public OncePerRequestFilter jwtRequestFilter(UserRepository userRepository, TokenRepository tokenRepository) {
-//        return new JwtRequestFilter(jwtUserDetailsService(userRepository), jwtTokenService(tokenRepository));
-//    }
+    @Bean
+    public OncePerRequestFilter jwtRequestFilter(UserRepository userRepository, TokenRepository tokenRepository) {
+        return new JwtRequestFilter(jwtUserDetailsService(userRepository), jwtTokenService(tokenRepository));
+    }
 
     @Bean
     public AuthenticationEntryPoint jwtAuthenticationEntryPoint() {

@@ -24,7 +24,7 @@ public class UserMainService implements UserService {
     public User validateAndSave(User user) {
         if (isValidUser(user)) {
             logger.info("User is valid");
-            Optional<User> dbUser = userRepository.findByUsername(user.getUsername());
+            Optional<User> dbUser = userRepository.findByEmail(user.getUsername());
             if (dbUser.isPresent()) {
                 logger.info("User already exists. Updating it.");
                 user.setId(dbUser.get().getId());
@@ -42,7 +42,7 @@ public class UserMainService implements UserService {
             return user;
 
         logger.info("Setting new password.");
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPasswordHash(passwordEncoder.encode(password));
         user = userRepository.save(user);
         return user;
     }
@@ -54,17 +54,13 @@ public class UserMainService implements UserService {
 
     private boolean isValidUser(User user) {
         if (user != null) {
-            if (!isValid(user.getUsername())) {
-                logger.error("Empty username.");
-                throw new UserValidationException("Empty username.");
+            if (!isValid(user.getEmail())) {
+                logger.error("Empty email.");
+                throw new UserValidationException("Empty email.");
             }
             if (!isValid(user.getPassword())) {
                 logger.error("Empty user password.");
                 throw new UserValidationException("Empty user password.");
-            }
-            if (!isValid(user.getEmail())) {
-                logger.error("Empty email.");
-                throw new UserValidationException("Empty email.");
             }
             return true;
         }
