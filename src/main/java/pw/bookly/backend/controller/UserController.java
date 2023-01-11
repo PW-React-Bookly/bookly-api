@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,8 @@ public class UserController {
     @GetMapping(path = "")
     public ResponseEntity<Collection<UserDTO>> getAllUsers(@RequestParam String page, @RequestParam String pageSize, @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
-        return ResponseEntity.ok(repository.findAll().stream().map(UserDTO::valueFrom).collect(toList()));
+        return ResponseEntity.ok(repository.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(pageSize)))
+                .stream().map(UserDTO::valueFrom).collect(toList()));
     }
 
     @Operation(summary = "Create new user")

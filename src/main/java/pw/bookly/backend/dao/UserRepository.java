@@ -1,11 +1,11 @@
 package pw.bookly.backend.dao;
 
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import pw.bookly.backend.models.User;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
     Optional<User> findByEmail(String username);
 }
