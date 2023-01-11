@@ -54,17 +54,13 @@ public class UserMainService implements UserService {
 
     private boolean isValidUser(User user) {
         if (user != null) {
-            if (!isValid(user.getUsername())) {
-                logger.error("Empty username.");
-                throw new UserValidationException("Empty username.");
+            if (!isValid(user.getEmail())) {
+                logger.error("Empty email.");
+                throw new UserValidationException("Empty email.");
             }
             if (!isValid(user.getPassword())) {
                 logger.error("Empty user password.");
                 throw new UserValidationException("Empty user password.");
-            }
-            if (!isValid(user.getEmail())) {
-                logger.error("Empty email.");
-                throw new UserValidationException("Empty email.");
             }
             return true;
         }
