@@ -42,7 +42,7 @@ public class UserMainService implements UserService {
             return user;
 
         logger.info("Setting new password.");
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPasswordHash(passwordEncoder.encode(password));
         user = userRepository.save(user);
         return user;
     }

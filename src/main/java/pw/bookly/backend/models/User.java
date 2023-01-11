@@ -24,7 +24,7 @@ public class User implements UserDetails {
     @Column
     private String lastName;
     @Column
-    private String password;
+    private String passwordHash;
     @Column
     private String jwtToken;
 
@@ -40,14 +40,13 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
-
     @Override
     public String getPassword() {
-        return password;
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String password) {
+        this.passwordHash = password;
     }
 
     public String getEmail() {
@@ -57,6 +56,7 @@ public class User implements UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+
     public Boolean getActive() {
         return isActive;
     }
