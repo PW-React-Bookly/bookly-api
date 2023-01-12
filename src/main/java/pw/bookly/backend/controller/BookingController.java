@@ -2,14 +2,16 @@ package pw.bookly.backend.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pw.bookly.backend.dao.BookingRepository;
+import pw.bookly.backend.models.Bookable;
+import pw.bookly.backend.specifications.BookingFilters;
+import pw.bookly.backend.specifications.BookingSpecification;
 import pw.bookly.backend.web.BookingDTO;
+import pw.bookly.backend.web.UserDTO;
 
 import java.util.Collection;
 
@@ -30,9 +32,18 @@ public class BookingController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<Collection<BookingDTO>> getAllBookings(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<Collection<BookingDTO>> getAllBookings(@RequestParam String page,
+                                                                 @RequestParam String pageSize,
+                                                                 @RequestParam(required = false) String firstName,
+                                                                 @RequestParam(required = false) String lastName,
+                                                                 @RequestParam(required = false) Bookable bookableType,
+                                                                 @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
-        return ResponseEntity.ok(repository.findAll().stream().map(BookingDTO::valueFrom).collect(toList()));
+        BookingFilters bookingFilters = new BookingFilters(firstName, lastName, bookableType);
+        var specification = new BookingSpecification(bookingFilters);
+        var pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(pageSize));
+        return ResponseEntity.ok(repository.findAll(specification, pageRequest)
+                .stream().map(BookingDTO::valueFrom).collect(toList()));
     }
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {

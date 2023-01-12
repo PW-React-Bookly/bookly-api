@@ -12,7 +12,7 @@ public class Flat implements Serializable {
     public static final long serialVersionUID = 2804123819413L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column
     private String address;

@@ -6,15 +6,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
-    private UUID id;
+    private long id;
     @Column
     private Boolean isActive;
     @Column
@@ -28,11 +26,11 @@ public class User implements UserDetails {
     @Column
     private String jwtToken;
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(long id) {
         this.id = id;
     }
 

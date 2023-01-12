@@ -5,7 +5,7 @@ import pw.bookly.backend.models.User;
 import javax.validation.constraints.Email;
 import java.util.UUID;
 
-public record UserDTO(UUID id, Boolean isActive, @Email String email, String firstName, String lastName, String passwordHash, String jwtToken) {
+public record UserDTO(long id, Boolean isActive, @Email String email, String firstName, String lastName, String passwordHash, String jwtToken) {
 
     public static UserDTO valueFrom(User user) {
         return new UserDTO(user.getId(), user.getActive(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getPassword(), user.getJwtToken());

@@ -9,9 +9,8 @@ import java.util.UUID;
 @Table(name = "bookings")
 public class Booking {
     @Id
-    @GeneratedValue
-    @Column
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     @Column
     private Boolean isCancelled;
     @Column
@@ -23,16 +22,17 @@ public class Booking {
     @Column
     private UUID itemExternalId;
     @Column
+    @Enumerated(EnumType.STRING)
     private Bookable bookableType;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName ="id", nullable = false)
     private User user;
 
-    public void setId(UUID id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
