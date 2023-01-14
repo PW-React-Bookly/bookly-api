@@ -21,10 +21,10 @@ public class BookingSpecification implements Specification<Booking> {
         List<Predicate> predicates = new ArrayList<>();
         Join<Booking, User> groupJoin = root.join("user");
         if (filters.getFirstName() != null) {
-            predicates.add(cb.equal(groupJoin.get("firstName"), filters.getFirstName()));
+            predicates.add(cb.like(groupJoin.get("firstName"), filters.getFirstName() + "%"));
         }
         if (filters.getLastName() != null) {
-            predicates.add(cb.equal(groupJoin.get("lastName"), filters.getLastName()));
+            predicates.add(cb.like(groupJoin.get("lastName"), filters.getLastName() + "%"));
         }
         if (filters.getBookable() != null) {
             predicates.add(cb.equal(root.get("bookableType"), filters.getBookable()));
