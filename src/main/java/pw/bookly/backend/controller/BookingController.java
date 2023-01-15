@@ -1,17 +1,19 @@
 package pw.bookly.backend.controller;
 
+import com.querydsl.core.types.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pw.bookly.backend.dao.BookingRepository;
-import pw.bookly.backend.models.Bookable;
-import pw.bookly.backend.specifications.BookingFilters;
-import pw.bookly.backend.specifications.BookingSpecification;
+import pw.bookly.backend.models.Booking;
 import pw.bookly.backend.web.BookingDTO;
-import pw.bookly.backend.web.UserDTO;
 
 import java.util.Collection;
 
@@ -32,17 +34,11 @@ public class BookingController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<Collection<BookingDTO>> getAllBookings(@RequestParam String page,
-                                                                 @RequestParam String pageSize,
-                                                                 @RequestParam(required = false) String firstName,
-                                                                 @RequestParam(required = false) String lastName,
-                                                                 @RequestParam(required = false) Bookable bookableType,
+    public ResponseEntity<Collection<BookingDTO>> getAllBookings(Pageable p,
+                                                                 @QuerydslPredicate(root = Booking.class) Predicate predicate,
                                                                  @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
-        BookingFilters bookingFilters = new BookingFilters(firstName, lastName, bookableType);
-        var specification = new BookingSpecification(bookingFilters);
-        var pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(pageSize));
-        return ResponseEntity.ok(repository.findAll(specification, pageRequest)
+        return ResponseEntity.ok(repository.findAll(predicate, p)
                 .stream().map(BookingDTO::valueFrom).collect(toList()));
     }
 

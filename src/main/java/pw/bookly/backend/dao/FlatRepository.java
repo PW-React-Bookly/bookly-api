@@ -1,9 +1,9 @@
 package pw.bookly.backend.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import pw.bookly.backend.models.Flat;
 
-import java.util.UUID;
-
-public interface FlatRepository extends JpaRepository<Flat, Long> {
+public interface FlatRepository extends JpaRepository<Flat, Long>,
+        QuerydslPredicateExecutor<Flat> {
 }
