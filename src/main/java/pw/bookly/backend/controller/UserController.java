@@ -1,5 +1,6 @@
 package pw.bookly.backend.controller;
 
+import com.querydsl.core.BooleanBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,11 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pw.bookly.backend.dao.UserRepository;
+import pw.bookly.backend.models.QUser;
 import pw.bookly.backend.models.User;
 import pw.bookly.backend.services.UserService;
 import pw.bookly.backend.web.UserDTO;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -27,6 +30,7 @@ import static java.util.stream.Collectors.toList;
 public class UserController {
     public static final String USERS_PATH = "/users";
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final QUser Q_USER = QUser.user;
     private final UserRepository repository;
     private final UserService userService;
 
@@ -38,7 +42,11 @@ public class UserController {
     @GetMapping(path = "")
     public ResponseEntity<Collection<UserDTO>> getAllUsers(Pageable p, @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
-        return ResponseEntity.ok(repository.findAll(p)
+
+        BooleanBuilder builder = new BooleanBuilder(Q_USER.isActive.isTrue());
+        var predicate = builder.getValue();
+
+        return ResponseEntity.ok(repository.findAll(Objects.requireNonNull(predicate), p)
                 .stream().map(UserDTO::valueFrom).collect(toList()));
     }
 
@@ -55,6 +63,19 @@ public class UserController {
         User newUser = userService.validateAndSave(UserDTO.convertToUser(user));
         logger.info("Password is not going to be encoded");
         return ResponseEntity.status(HttpStatus.CREATED).body(UserDTO.valueFrom(newUser));
+    }
+
+    @PostMapping(path = "/ban/{id}")
+    public void banUser(@PathVariable Long id,
+                        @RequestHeader HttpHeaders headers) {
+        logHeaders(headers);
+        var user = repository.findById(id);
+        if(user.isPresent())
+        {
+            var value = user.get();
+            value.setActive(false);
+            repository.save(value);
+        }
     }
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {
