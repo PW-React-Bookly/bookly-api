@@ -1,33 +1,21 @@
 package pw.bookly.backend.models;
 
-import javax.persistence.*;
-import java.io.Serial;
-import java.io.Serializable;
+public class Flat{
 
-@Entity
-@Table(name = "flat")
-public class Flat implements Serializable {
-
-    @Serial
-    public static final long serialVersionUID = 2804123819413L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column
+    private String itemExternalId;
     private String address;
-    @Column(name = "num_of_people")
     private int numberOfPeople;
-    @Column(name = "price_per_night")
     private float pricePerNight;
 
+    private String description;
 
-    public long getId() {
-        return id;
+
+    public String getItemExternalId() {
+        return itemExternalId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setItemExternalId(String itemExternalId) {
+        this.itemExternalId = itemExternalId;
     }
 
     public String getAddress() {
@@ -53,4 +41,13 @@ public class Flat implements Serializable {
     public void setPricePerNight(float pricePerNight) {
         this.pricePerNight = pricePerNight;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }
