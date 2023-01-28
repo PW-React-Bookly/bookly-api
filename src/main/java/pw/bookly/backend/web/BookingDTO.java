@@ -6,10 +6,9 @@ import pw.bookly.backend.models.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 public record BookingDTO(long id, Boolean isCancelled, BigDecimal totalPrice, LocalDate bookedFrom, LocalDate bookedUntil,
-                         UUID itemExternalId, Bookable bookableType, User user) {
+                         Long itemExternalId, Bookable bookableType, User user) {
     public static BookingDTO valueFrom(Booking booking) {
         return new BookingDTO(booking.getId(), booking.getCancelled(), booking.getTotalPrice(), booking.getBookedFrom(), booking.getBookedUntil(),
                 booking.getItemExternalId(), booking.getBookableType(), booking.getUser());
