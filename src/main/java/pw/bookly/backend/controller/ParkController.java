@@ -56,8 +56,8 @@ public class ParkController {
         int firstId = p.getPageSize() * p.getPageNumber();
         int lastId = p.getPageSize() * (p.getPageNumber() + 1) - 1;
 
-        int firstPage = firstId / 50;
-        int lastPage = lastId / 50;
+        int firstPage = firstId / 20;
+        int lastPage = lastId / 20;
 
         if (firstPage == lastPage) {
             String url = parkControllerConfig.getParklyBackend() + PARKLY_ENDPOINT_PATH + "/getPage/" + (firstPage + 1) + "/sortDescending/true";
@@ -66,7 +66,7 @@ public class ParkController {
             List<Park> result = new ArrayList<>();
             try {
                 result = Objects.requireNonNull(parks.getBody()).getParkingLotsDto()
-                        .subList(firstId % 50, Math.min(lastId % 50 + 1, parks.getBody().getParkingLotsDto().size()));
+                        .subList(firstId % 20, Math.min(lastId % 20 + 1, parks.getBody().getParkingLotsDto().size()));
             } catch (Exception e) {
                 result = Objects.requireNonNull(parks.getBody()).getParkingLotsDto();
             }
@@ -85,10 +85,10 @@ public class ParkController {
                 try {
                     if (i == firstPage) {
                         parkingList.addAll(Objects.requireNonNull(parks.getBody()).getParkingLotsDto()
-                                .subList(firstId % 50, 50));
+                                .subList(firstId % 20, 20));
                     } else if (i == lastPage) {
                         parkingList.addAll(Objects.requireNonNull(parks.getBody()).getParkingLotsDto()
-                                .subList(0, lastPage % 50));
+                                .subList(0, lastId % 20 + 1));
                     } else {
                         parkingList.addAll(Objects.requireNonNull(parks.getBody()).getParkingLotsDto());
                     }
