@@ -12,7 +12,7 @@ public record CarDTO(
         List<String> equipment,
         int dayPrice,
         String color,
-        List<String> photos
+        List<Integer> photos
         ) {
 
     public static CarDTO valueFrom(Car car) {
@@ -22,7 +22,7 @@ public record CarDTO(
                 car.getEquipment().stream().map(Equipment::getName).toList(),
                 car.getDayPrice(),
                 car.getColor(),
-                car.getPhotos().stream().map(Photo::getName).toList()
+                car.getPhotos().stream().map(Photo::getId).toList()
         );
     }
 }

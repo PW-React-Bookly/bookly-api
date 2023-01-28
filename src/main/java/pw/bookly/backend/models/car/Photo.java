@@ -5,5 +5,5 @@ import lombok.Value;
 @Value
 public class Photo {
 
-    String name;
+    int id;
 }
