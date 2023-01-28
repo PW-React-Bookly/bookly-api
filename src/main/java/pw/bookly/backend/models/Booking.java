@@ -3,7 +3,6 @@ package pw.bookly.backend.models;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Table(name = "bookings")
@@ -20,7 +19,7 @@ public class Booking {
     @Column
     private LocalDate bookedUntil;
     @Column
-    private UUID itemExternalId;
+    private Long itemExternalId;
     @Column
     @Enumerated(EnumType.STRING)
     private Bookable bookableType;
@@ -68,11 +67,11 @@ public class Booking {
         this.bookedUntil = bookedUntil;
     }
 
-    public UUID getItemExternalId() {
+    public Long getItemExternalId() {
         return itemExternalId;
     }
 
-    public void setItemExternalId(UUID itemExternalId) {
+    public void setItemExternalId(Long itemExternalId) {
         this.itemExternalId = itemExternalId;
     }
 

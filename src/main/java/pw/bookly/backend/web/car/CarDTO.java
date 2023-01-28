@@ -9,6 +9,7 @@ import java.util.List;
 public record CarDTO(
         String id,
         ModelDTO model,
+        Long mileage,
         List<String> equipment,
         int dayPrice,
         String color,
@@ -19,6 +20,7 @@ public record CarDTO(
         return new CarDTO(
                 car.getId(),
                 ModelDTO.valueFrom(car.getModel()),
+                car.getMileage(),
                 car.getEquipment().stream().map(Equipment::getName).toList(),
                 car.getDayPrice(),
                 car.getColor(),
