@@ -1,4 +1,4 @@
-package pw.bookly.backend.models.car;
+package pw.bookly.backend.models.carly;
 
 import lombok.Value;
 

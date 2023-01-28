@@ -1,8 +1,8 @@
-package pw.bookly.backend.web.car;
+package pw.bookly.backend.web.carly;
 
-import pw.bookly.backend.models.car.Car;
-import pw.bookly.backend.models.car.Equipment;
-import pw.bookly.backend.models.car.Photo;
+import pw.bookly.backend.models.carly.Car;
+import pw.bookly.backend.models.carly.Equipment;
+import pw.bookly.backend.models.carly.Photo;
 
 import java.util.List;
 

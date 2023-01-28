@@ -3,20 +3,20 @@ package pw.bookly.backend.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import pw.bookly.backend.config.CarControllerConfig;
-import pw.bookly.backend.models.car.Car;
-import pw.bookly.backend.models.car.CarResponse;
-import pw.bookly.backend.web.car.CarDTO;
+import pw.bookly.backend.models.carly.*;
+import pw.bookly.backend.web.carly.CarDTO;
 import org.springframework.data.domain.Pageable;
-import pw.bookly.backend.web.car.CarResponseDTO;
+import pw.bookly.backend.web.carly.CarResponseDTO;
 
 import java.util.Objects;
 
+import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(path = CarController.CARS_PATH)
@@ -60,6 +60,8 @@ public class CarController {
 
         return ResponseEntity.ok(CarDTO.valueFrom(Objects.requireNonNull(cars.getBody())));
     }
+
+
     private void logHeaders(@RequestHeader HttpHeaders headers) {
         logger.info("Controller request headers {}",
                 headers.entrySet()
