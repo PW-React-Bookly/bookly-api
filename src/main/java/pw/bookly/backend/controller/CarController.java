@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -14,23 +15,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import pw.bookly.backend.config.CarControllerConfig;
-import pw.bookly.backend.models.User;
-import pw.bookly.backend.models.Flat;
-import pw.bookly.backend.models.carly.*;
+import pw.bookly.backend.models.carly.Car;
+import pw.bookly.backend.models.carly.CarResponse;
 import pw.bookly.backend.services.UserService;
-import pw.bookly.backend.web.FlatDTO;
-import pw.bookly.backend.web.FlatResponseDTO;
 import pw.bookly.backend.web.carly.CarDTO;
-import org.springframework.data.domain.Pageable;
 import pw.bookly.backend.web.carly.CarResponseDTO;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(path = CarController.CARS_PATH)
