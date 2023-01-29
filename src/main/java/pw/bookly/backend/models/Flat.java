@@ -1,53 +1,23 @@
 package pw.bookly.backend.models;
 
-public class Flat{
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Value;
 
-    private String itemExternalId;
+import java.math.BigDecimal;
+
+@Value
+public class Flat {
+    private String id;
+    private String country;
+    private String town;
     private String address;
-    private int numberOfPeople;
-    private float pricePerNight;
-
+    private int capacity;
+    private int rooms;
+    private float footage;
+    @JsonFormat(shape=JsonFormat.Shape.STRING)
+    private BigDecimal price;
+    private String contactInfo;
     private String description;
-
-
-    public String getItemExternalId() {
-        return itemExternalId;
-    }
-
-    public void setItemExternalId(String itemExternalId) {
-        this.itemExternalId = itemExternalId;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public int getNumberOfPeople() {
-        return numberOfPeople;
-    }
-
-    public void setNumberOfPeople(int numberOfPeople) {
-        this.numberOfPeople = numberOfPeople;
-    }
-
-    public float getPricePerNight() {
-        return pricePerNight;
-    }
-
-    public void setPricePerNight(float pricePerNight) {
-        this.pricePerNight = pricePerNight;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    private String thumbnail;
 
 }
