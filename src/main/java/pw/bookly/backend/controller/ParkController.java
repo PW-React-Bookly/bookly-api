@@ -27,7 +27,7 @@ public class ParkController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<Collection<ParkDTO>> getAllFlats(Pageable p,
+    public ResponseEntity<Collection<ParkDTO>> getAllParks(Pageable p,
                                                            @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
 
@@ -44,7 +44,7 @@ public class ParkController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<ParkDTO> getFlat(@PathVariable String id,
+    public ResponseEntity<ParkDTO> getPark(@PathVariable String id,
                                            @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
 
