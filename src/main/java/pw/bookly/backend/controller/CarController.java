@@ -72,13 +72,13 @@ public class CarController {
         if(params.containsKey("dateTo"))
             externalParams.put("endDate", List.of(params.get("dateTo")));
 
-        try {
-            generateToken();
-        } catch (JSONException | JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            generateToken();
+//        } catch (JSONException | JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
         var requestHeaders = new HttpHeaders();
-        requestHeaders.set("Authorization", getTokenHeader());
+        requestHeaders.set("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBYWEiLCJzdXJuYW1lIjoiYWRtaW40IiwiaXAiOiIyMTMuMTM0LjE5MS40OjEzNDE1IiwibmFtZSI6ImFkbWluNCIsInNjb3BlcyI6IlJPTEVfQ0FSTFlBRE1JTiIsImV4cCI6MTY3NTA5ODEwNiwiaWF0IjoxNjc1MDExNzA2LCJlbWFpbCI6InRlc3Q0QHRlc3QucGwiLCJ1c2VyLWFnZW50IjoiSmF2YS8xNy4wLjYifQ.Hx-IHAz31VkpISjpv3YopDmG4NUSw1lPvcNhPG4VgePMbemvKlpTGtQDiSdDix1pmi_TQzUcjvUgxjC74Dzsgg");
         HttpEntity<String> request = new HttpEntity<String>(requestHeaders);
         var response = restTemplate.exchange(url, HttpMethod.GET, request, Car[].class);
 
