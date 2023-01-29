@@ -19,7 +19,9 @@ public class Booking {
     @Column
     private LocalDate bookedUntil;
     @Column
-    private Long itemExternalId;
+    private String itemExternalId;
+    @Column
+    private String bookingExternalId;
     @Column
     @Enumerated(EnumType.STRING)
     private Bookable bookableType;
@@ -67,13 +69,22 @@ public class Booking {
         this.bookedUntil = bookedUntil;
     }
 
-    public Long getItemExternalId() {
+    public String getItemExternalId() {
         return itemExternalId;
     }
 
-    public void setItemExternalId(Long itemExternalId) {
+    public void setItemExternalId(String itemExternalId) {
         this.itemExternalId = itemExternalId;
     }
+
+    public String getBookingExternalId() {
+        return bookingExternalId;
+    }
+
+    public void setBookingExternalId(String bookingExternalId) {
+        this.bookingExternalId = bookingExternalId;
+    }
+
 
     public Bookable getBookableType() {
         return bookableType;

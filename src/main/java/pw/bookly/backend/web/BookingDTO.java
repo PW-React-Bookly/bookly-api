@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record BookingDTO(long id, Boolean isCancelled, BigDecimal totalPrice, LocalDate bookedFrom, LocalDate bookedUntil,
-                         Long itemExternalId, Bookable bookableType, User user) {
+                         String itemExternalId, Bookable bookableType, User user) {
     public static BookingDTO valueFrom(Booking booking) {
         return new BookingDTO(booking.getId(), booking.getCancelled(), booking.getTotalPrice(), booking.getBookedFrom(), booking.getBookedUntil(),
                 booking.getItemExternalId(), booking.getBookableType(), booking.getUser());

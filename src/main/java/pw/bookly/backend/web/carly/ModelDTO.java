@@ -1,6 +1,6 @@
-package pw.bookly.backend.web.car;
+package pw.bookly.backend.web.carly;
 
-import pw.bookly.backend.models.car.Model;
+import pw.bookly.backend.models.carly.Model;
 
 public record ModelDTO(
         BrandDTO brand,

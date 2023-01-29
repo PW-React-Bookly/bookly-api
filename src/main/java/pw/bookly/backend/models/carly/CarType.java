@@ -1,9 +1,9 @@
-package pw.bookly.backend.models.car;
+package pw.bookly.backend.models.carly;
 
 import lombok.Value;
 
 @Value
-public class FuelType {
+public class CarType {
 
     String id;
     String name;

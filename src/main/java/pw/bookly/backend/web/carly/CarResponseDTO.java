@@ -1,7 +1,7 @@
-package pw.bookly.backend.web.car;
+package pw.bookly.backend.web.carly;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import pw.bookly.backend.models.car.CarResponse;
+import pw.bookly.backend.models.carly.CarResponse;
 
 import java.util.List;
 
