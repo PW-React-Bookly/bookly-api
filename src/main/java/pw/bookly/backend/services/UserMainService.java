@@ -2,12 +2,15 @@ package pw.bookly.backend.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pw.bookly.backend.dao.UserRepository;
 import pw.bookly.backend.exceptions.UserValidationException;
 import pw.bookly.backend.models.User;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 
 public class UserMainService implements UserService {
 
@@ -35,6 +38,24 @@ public class UserMainService implements UserService {
         return user;
     }
 
+    public String generateToken() {
+        Random r = new Random();
+        return r.ints(48, 123)
+                .filter(num -> (num < 58 || num > 64) && (num < 91 || num > 96))
+                .limit(100)
+                .mapToObj(c -> (char) c).collect(StringBuffer::new, StringBuffer::append, StringBuffer::append)
+                .toString();
+    }
+
+    @Override
+    public Optional<User> authorizeUser(HttpHeaders headers) {
+        if(!headers.containsKey("Authorization"))
+            return Optional.empty();
+        String header = Objects.requireNonNull(headers.get("Authorization")).get(0);
+        String token = header.split(" ")[1];
+        return userRepository.findByJwtToken(token);
+    }
+
     @Override
     public User updatePassword(User user, String password) {
 
@@ -42,7 +63,7 @@ public class UserMainService implements UserService {
             return user;
 
         logger.info("Setting new password.");
-        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(password));
         user = userRepository.save(user);
         return user;
     }

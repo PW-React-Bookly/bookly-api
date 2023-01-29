@@ -7,19 +7,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import pw.bookly.backend.config.CarControllerConfig;
 import pw.bookly.backend.dao.BookingRepository;
 import pw.bookly.backend.models.Bookable;
 import pw.bookly.backend.models.Booking;
 import pw.bookly.backend.models.QBooking;
-import pw.bookly.backend.models.User;
-import pw.bookly.backend.models.carly.CarlyBooking;
 import pw.bookly.backend.models.carly.CarlyBookingRequest;
 import pw.bookly.backend.models.carly.CarlyBookingRequestCustomer;
-import pw.bookly.backend.models.carly.FrontendBookingRequest;
+import pw.bookly.backend.models.carly.FrontendBookingCarlyRequest;
+import pw.bookly.backend.models.flatly.FrontendBookingFlatlyRequest;
+import pw.bookly.backend.models.park.FrontendBookingParklyRequest;
+import pw.bookly.backend.services.UserService;
 import pw.bookly.backend.web.BookingDTO;
 
 import java.math.BigDecimal;
@@ -39,13 +39,12 @@ public class BookingController {
     private static final Logger logger = LoggerFactory.getLogger(BookingController.class);
     private static final QBooking Q_BOOKING = QBooking.booking;
     private final BookingRepository repository;
-    private final RestTemplate restTemplate;
-    private final CarControllerConfig carControllerConfig;
+    private final UserService userService;
 
-    public BookingController(BookingRepository repository, RestTemplate restTemplate, CarControllerConfig carControllerConfig) {
+
+    public BookingController(BookingRepository repository, UserService userService) {
         this.repository = repository;
-        this.restTemplate = restTemplate;
-        this.carControllerConfig = carControllerConfig;
+        this.userService = userService;
     }
 
     @GetMapping(path = "")
@@ -68,10 +67,13 @@ public class BookingController {
                                                                  @QuerydslPredicate(root = Booking.class) Predicate predicate,
                                                                  @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
+        var user = userService.authorizeUser(headers);
+        if(user.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         BooleanBuilder builder = new BooleanBuilder(predicate);
         builder.and(Q_BOOKING.isCancelled.isFalse());
-        builder.and(Q_BOOKING.user.id.eq(Long.valueOf(1))); // TODO Change to real user from token
+        builder.and(Q_BOOKING.user.id.eq(user.get().getId()));
         builder.and(Q_BOOKING.bookableType.eq(Bookable.valueOf(bookableType.toUpperCase())));
         predicate = builder.getValue();
 
@@ -80,9 +82,12 @@ public class BookingController {
     }
 
     @PostMapping(path="/book/carly")
-    public ResponseEntity<Void> makeCarlyBooking(@RequestBody FrontendBookingRequest bookingRequest,
+    public ResponseEntity<Void> makeCarlyBooking(@RequestBody FrontendBookingCarlyRequest bookingRequest,
                                                  @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
+        var user = userService.authorizeUser(headers);
+        if(user.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         var request = CarlyBookingRequest.builder()// TODO Change to real frontend fields
                 .carId(parseInt(bookingRequest.getCarId()))
@@ -101,7 +106,7 @@ public class BookingController {
                 .endPlace("Mokotow")
                 .endPosition("Mok")
                 .isMaintenance(false)
-                .customer(new CarlyBookingRequestCustomer(1, "testName", "testSurname"))
+                .customer(new CarlyBookingRequestCustomer(user.get().getId(), "testName", "testSurname"))
                 .build();
 
         /*ResponseEntity<CarlyBooking> carlyBookingResponse = restTemplate.postForEntity(
@@ -111,16 +116,110 @@ public class BookingController {
         */
         //var carlyBooking = Objects.requireNonNull(carlyBookingResponse.getBody());
         var booking = new Booking(); // TODO Change to real booking data
-        booking.setBookedFrom(LocalDate.now());//carlyBooking.getBeginDate());
-        booking.setBookedUntil(LocalDate.now().plusDays(2));//carlyBooking.getEndDate());
+        booking.setBookedFrom(bookingRequest.getBeginDate());
+        booking.setBookedUntil(bookingRequest.getEndDate());
         booking.setBookableType(Bookable.CAR);
-        booking.setItemExternalId(bookingRequest.getCarId());//carlyBooking.getId()));
+        booking.setItemExternalId(bookingRequest.getCarId());
         booking.setBookingExternalId(String.valueOf(1));//carlyBooking.getId()));
         booking.setTotalPrice(new BigDecimal(12));
         booking.setCancelled(false);
-        var testUser = new User();
-        testUser.setId(1);
-        booking.setUser(testUser);
+        booking.setUser(user.get());
+        repository.save(booking);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path="/book/flatly")
+    public ResponseEntity<Void> makeFlatlyBooking(@RequestBody FrontendBookingFlatlyRequest bookingRequest,
+                                                 @RequestHeader HttpHeaders headers) {
+        logHeaders(headers);
+        var user = userService.authorizeUser(headers);
+        if(user.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        /*var request = CarlyBookingRequest.builder()// TODO Change to real frontend fields
+                .carId(parseInt(bookingRequest.getCarId()))
+                .beginDate(new int[] {
+                        bookingRequest.getBeginDate().getYear(),
+                        bookingRequest.getBeginDate().getMonth().getValue(),
+                        bookingRequest.getBeginDate().getDayOfMonth()
+                })
+                .endDate(new int[] {
+                        bookingRequest.getEndDate().getYear(),
+                        bookingRequest.getEndDate().getMonth().getValue(),
+                        bookingRequest.getEndDate().getDayOfMonth()
+                })
+                .beginPlace("Mokotow")
+                .beginPosition("Mok")
+                .endPlace("Mokotow")
+                .endPosition("Mok")
+                .isMaintenance(false)
+                .customer(new CarlyBookingRequestCustomer(user.get().getId(), "testName", "testSurname"))
+                .build();
+
+        /*ResponseEntity<CarlyBooking> carlyBookingResponse = restTemplate.postForEntity(
+                carControllerConfig.getCarlyBackend() + "/reservations" ,
+                request,
+                CarlyBooking.class);
+        */
+        //var carlyBooking = Objects.requireNonNull(carlyBookingResponse.getBody());
+        var booking = new Booking(); // TODO Change to real booking data
+        booking.setBookedFrom(bookingRequest.getBeginDate());
+        booking.setBookedUntil(bookingRequest.getEndDate());
+        booking.setBookableType(Bookable.FLAT);
+        booking.setItemExternalId(bookingRequest.getFlatId());
+        booking.setBookingExternalId(String.valueOf(1));//carlyBooking.getId()));
+        booking.setTotalPrice(new BigDecimal(12));
+        booking.setCancelled(false);
+        booking.setUser(user.get());
+        repository.save(booking);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path="/book/parkly")
+    public ResponseEntity<Void> makeParklyBooking(@RequestBody FrontendBookingParklyRequest bookingRequest,
+                                                  @RequestHeader HttpHeaders headers) {
+        logHeaders(headers);
+        var user = userService.authorizeUser(headers);
+        if(user.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        /*var request = CarlyBookingRequest.builder()// TODO Change to real frontend fields
+                .carId(parseInt(bookingRequest.getCarId()))
+                .beginDate(new int[] {
+                        bookingRequest.getBeginDate().getYear(),
+                        bookingRequest.getBeginDate().getMonth().getValue(),
+                        bookingRequest.getBeginDate().getDayOfMonth()
+                })
+                .endDate(new int[] {
+                        bookingRequest.getEndDate().getYear(),
+                        bookingRequest.getEndDate().getMonth().getValue(),
+                        bookingRequest.getEndDate().getDayOfMonth()
+                })
+                .beginPlace("Mokotow")
+                .beginPosition("Mok")
+                .endPlace("Mokotow")
+                .endPosition("Mok")
+                .isMaintenance(false)
+                .customer(new CarlyBookingRequestCustomer(user.get().getId(), "testName", "testSurname"))
+                .build();
+
+        /*ResponseEntity<CarlyBooking> carlyBookingResponse = restTemplate.postForEntity(
+                carControllerConfig.getCarlyBackend() + "/reservations" ,
+                request,
+                CarlyBooking.class);
+        */
+        //var carlyBooking = Objects.requireNonNull(carlyBookingResponse.getBody());
+        var booking = new Booking(); // TODO Change to real booking data
+        booking.setBookedFrom(bookingRequest.getBeginDate());
+        booking.setBookedUntil(bookingRequest.getEndDate());
+        booking.setBookableType(Bookable.PARK);
+        booking.setItemExternalId(bookingRequest.getParkId());
+        booking.setBookingExternalId(String.valueOf(1));//carlyBooking.getId()));
+        booking.setTotalPrice(new BigDecimal(12));
+        booking.setCancelled(false);
+        booking.setUser(user.get());
         repository.save(booking);
 
         return ResponseEntity.ok().build();
@@ -134,7 +233,7 @@ public class BookingController {
         if(booking.isEmpty())
             return;
 
-        restTemplate.delete(carControllerConfig.getCarlyBackend() + "/reservations/" + booking.get().getBookingExternalId());
+        //restTemplate.delete(carControllerConfig.getCarlyBackend() + "/reservations/" + booking.get().getBookingExternalId());
 
         var value = booking.get();
         value.setCancelled(true);

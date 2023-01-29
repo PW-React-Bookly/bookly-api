@@ -5,7 +5,7 @@ import lombok.Value;
 @Value
 public class CarlyBookingRequestCustomer {
 
-    int booklyId;
+    long booklyId;
     String name;
     String surname;
 }

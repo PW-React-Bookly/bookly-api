@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import pw.bookly.backend.config.FlatControllerConfig;
 import pw.bookly.backend.models.Flat;
+import pw.bookly.backend.services.UserService;
 import pw.bookly.backend.web.FlatDTO;
 import pw.bookly.backend.web.FlatResponseDTO;
 
@@ -36,16 +37,21 @@ public class FlatController {
     public static final String LOGIN_PATH = "/auth/login";
     private static final Logger logger = LoggerFactory.getLogger(FlatController.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final UserService userService;
 
-    public FlatController(RestTemplate restTemplate, FlatControllerConfig config) {
+    public FlatController(RestTemplate restTemplate, FlatControllerConfig config, UserService userService) {
         this.restTemplate = restTemplate;
         this.config = config;
+        this.userService = userService;
     }
 
     @GetMapping(path = "")
     public ResponseEntity<FlatResponseDTO> getAllFlats(Pageable p,
                                                            @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
+        var user = userService.authorizeUser(headers);
+        if(user.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         String url = config.getFlatlyBackend() +
                 FLATS_PATH +

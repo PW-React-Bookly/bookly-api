@@ -22,7 +22,7 @@ public class User implements UserDetails {
     @Column
     private String lastName;
     @Column
-    private String passwordHash;
+    private String password;
     @Column
     private String jwtToken;
 
@@ -40,11 +40,11 @@ public class User implements UserDetails {
     }
     @Override
     public String getPassword() {
-        return passwordHash;
+        return password;
     }
 
-    public void setPasswordHash(String password) {
-        this.passwordHash = password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
