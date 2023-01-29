@@ -5,7 +5,7 @@ import lombok.Value;
 import java.time.LocalDate;
 
 @Value
-public class FrontendBookingRequest {
+public class FrontendBookingCarlyRequest {
 
     String carId;
     LocalDate beginDate;

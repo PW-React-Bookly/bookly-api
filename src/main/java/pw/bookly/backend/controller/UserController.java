@@ -17,6 +17,7 @@ import pw.bookly.backend.dao.UserRepository;
 import pw.bookly.backend.models.QUser;
 import pw.bookly.backend.models.User;
 import pw.bookly.backend.services.UserService;
+import pw.bookly.backend.web.TokenResponseDTO;
 import pw.bookly.backend.web.UserDTO;
 
 import java.util.Collection;
@@ -64,6 +65,20 @@ public class UserController {
         logger.info("Password is not going to be encoded");
         return ResponseEntity.status(HttpStatus.CREATED).body(UserDTO.valueFrom(newUser));
     }
+
+    @PostMapping(path = "/login")
+    public ResponseEntity<TokenResponseDTO> signInUser(@RequestBody UserDTO user) {
+        var dbUser = repository.findByEmail(user.email());
+        if(dbUser.isPresent() && Objects.equals(dbUser.get().getPassword(), user.password())) {
+            dbUser.get().setJwtToken(userService.generateToken());
+            repository.save(dbUser.get());
+            var token = new TokenResponseDTO(dbUser.get().getJwtToken());
+            return ResponseEntity.status(HttpStatus.OK).body(token);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+
 
     @PostMapping(path = "/ban/{id}")
     public void banUser(@PathVariable Long id,
