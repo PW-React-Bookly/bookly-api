@@ -7,16 +7,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import pw.bookly.backend.config.FlatControllerConfig;
 import pw.bookly.backend.models.Flat;
 import pw.bookly.backend.web.FlatDTO;
-import org.springframework.data.domain.Pageable;
 import pw.bookly.backend.web.FlatResponseDTO;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -64,17 +65,27 @@ public class FlatController {
         return ResponseEntity.ok(responseDTO);
     }
 
-//    @GetMapping(path = "/{id}")
-//    public ResponseEntity<FlatDTO> getFlat(@PathVariable String id,
-//                                           @RequestHeader HttpHeaders headers) {
-//        logHeaders(headers);
-//
-//        Random rand = new Random();
-//        var mockFlat = new Flat();
-//        mockFlat.setDescription(String.format("I'm a flat No %s.\nMy favourite number is %d", id, rand.nextInt()));
-//
-//        return ResponseEntity.ok(FlatDTO.valueFrom(mockFlat));
-//    }
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<FlatDTO> getFlat(@PathVariable String id,
+                                           @RequestHeader HttpHeaders headers) {
+        logHeaders(headers);
+
+        String url = config.getFlatlyBackend() + FLATS_PATH + "/" + id;
+        try {
+            generateToken();
+        } catch (JSONException | JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        var requestHeaders = new HttpHeaders();
+        requestHeaders.set("Authorization", getTokenHeader());
+        HttpEntity<String> request = new HttpEntity<String>(requestHeaders);
+
+        ResponseEntity<Flat> flat =
+                restTemplate.exchange(url, HttpMethod.GET, request, Flat.class);
+
+        return ResponseEntity.ok(FlatDTO.valueFrom(Objects.requireNonNull(flat.getBody())));
+    }
     private void logHeaders(@RequestHeader HttpHeaders headers) {
         logger.info("Controller request headers {}",
                 headers.entrySet()
