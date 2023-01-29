@@ -6,7 +6,6 @@ import pw.bookly.backend.models.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 public record BookingDTO(long id, Boolean isCancelled, BigDecimal totalPrice, LocalDate bookedFrom, LocalDate bookedUntil,
                          String itemExternalId, Bookable bookableType, User user) {

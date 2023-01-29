@@ -9,8 +9,9 @@ public class Car{
 
     String id;
     Model model;
+    Long mileage;
     List<Equipment> equipment;
     int dayPrice;
-    String Color;
+    String color;
     List<Photo> photos;
 }
