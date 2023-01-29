@@ -1,8 +1,5 @@
 package pw.bookly.backend.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import pw.bookly.backend.web.car.CarDTO;
-
 import java.util.List;
 
 public record FlatResponseDTO(
