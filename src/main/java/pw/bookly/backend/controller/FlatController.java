@@ -9,15 +9,22 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import pw.bookly.backend.config.FlatControllerConfig;
+import pw.bookly.backend.exceptions.UnauthorizedException;
 import pw.bookly.backend.models.Flat;
 import pw.bookly.backend.services.UserService;
 import pw.bookly.backend.web.FlatDTO;
 import pw.bookly.backend.web.FlatResponseDTO;
 
+import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.joining;
@@ -46,7 +53,7 @@ public class FlatController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<FlatResponseDTO> getAllFlats(Pageable p,
+    public ResponseEntity<FlatResponseDTO> getAllFlats(Pageable p, @RequestParam Map<String, String> params,
                                                            @RequestHeader HttpHeaders headers) {
         logHeaders(headers);
         var user = userService.authorizeUser(headers);
@@ -60,12 +67,25 @@ public class FlatController {
         try {
             generateToken();
         } catch (JSONException | JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new UnauthorizedException("Flatly token can't be fetched", "");
         }
+        MultiValueMap<String, String> externalParams = new LinkedMultiValueMap<>();
+        if(params.containsKey("priceFrom"))
+            externalParams.put("minPrice", List.of(params.get("priceFrom")));
+        if(params.containsKey("priceTo"))
+            externalParams.put("maxPrice", List.of(params.get("priceTo")));
+        if(params.containsKey("dateFrom"))
+            externalParams.put("dateFrom", List.of(params.get("dateFrom") + "T00:00:00Z"));
+        if(params.containsKey("dateTo"))
+            externalParams.put("dateTo", List.of(params.get("dateTo") + "T00:00:00Z"));
+        URI uri = UriComponentsBuilder.fromUriString(url)
+                .queryParams(externalParams)
+                .buildAndExpand(externalParams)
+                .toUri();
         var requestHeaders = new HttpHeaders();
         requestHeaders.set("Authorization", getTokenHeader());
         HttpEntity<String> request = new HttpEntity<String>(requestHeaders);
-        var response = restTemplate.exchange(url, HttpMethod.GET, request, Flat[].class);
+        var response = restTemplate.exchange(uri, HttpMethod.GET, request, Flat[].class);
         var responseDTO = FlatResponseDTO.of(Arrays.stream(response.getBody()).map(FlatDTO::valueFrom).collect(toList()),
                 p.getPageNumber(), p.getPageSize());
         return ResponseEntity.ok(responseDTO);
